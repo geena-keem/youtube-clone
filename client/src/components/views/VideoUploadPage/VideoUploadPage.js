@@ -90,7 +90,7 @@ function VideoUploadPage(props) {
     e.preventDefault();
 
     const variables = {
-      wirter: user.userData._id, // redux를 통해 가져온다.
+      writer: user.userData._id, // redux를 통해 가져온다.
       title: VideoTitle,
       description: Description,
       privacy: Private,
