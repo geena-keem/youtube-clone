@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, List, Avatar } from 'antd';
 import Axios from 'axios';
+import SideVideo from './Sections/SideVideo';
 
 function VideoDetailPage(props) {
   const videoId = props.match.params.videoId; // videoId 가져오기
@@ -24,7 +25,7 @@ function VideoDetailPage(props) {
         <Col lg={18} xs={24}>
           <div style={{ width: '100%', padding: '3rem 4rem' }}>
             <video
-              style={{ width: '100%' }}
+              style={{ width: '100%', height: '700px' }}
               src={`http://localhost:5000/${VideoDetail.filePath}`}
               controls
             />
@@ -40,7 +41,8 @@ function VideoDetailPage(props) {
           </div>
         </Col>
         <Col lg={6} xs={24}>
-          Side Videos
+          {/* Side Videos */}
+          <SideVideo />
         </Col>
       </Row>
     );
