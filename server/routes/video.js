@@ -46,6 +46,16 @@ router.post('/uploadfiles', (req, res) => {
   });
 });
 
+router.get('/getVideos', (req, res) => {
+  // ✔ 비디오를 DB에서 가져와 클라이언트에 보낸다.
+  Video.find() // 비디오 컬렉션에 있는
+    .populate('writer') // 모든 writer 정보를 가져온다.
+    .exec((err, videos) => {
+      if (err) return res.status(400).send(err);
+      return res.status(200).json({ success: true, videos });
+    });
+});
+
 router.post('/uploadVideo', (req, res) => {
   // ✔ 비디오 정보들을 저장한다.
   const video = new Video(req.body); // 클라이언트에서 보낸 variables들이 request.body에 담겨있다.
