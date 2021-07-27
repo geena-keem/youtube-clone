@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 
 const { Video } = require('../models/Video');
+const { Subscriber } = require('../models/Subscriber');
 const { auth } = require('../middleware/auth');
 var ffmpeg = require('fluent-ffmpeg');
 
@@ -123,6 +124,31 @@ router.post('/thumbnail', (req, res) => {
       // '%b': 입력 기본 이름 (확장자가 없는 파일 이름)
       filename: 'thumbnail-%b.png',
     });
+});
+
+router.post('/getSubscriptionVideos', (req, res) => {
+  // ✔ 자신의 아이디를 가지고 구독하는 사람들을 찾는다.
+  Subscriber.find({ userFrom: req.body.userFrom }).exec(
+    (err, subscriberInfo) => {
+      if (err) return res.status(400).send(err);
+
+      let subscribedUser = [];
+      subscriberInfo.map((subscriber, i) => {
+        subscribedUser.push(subscriber.userTo);
+      });
+
+      // ✔ 찾은 사람들의 비디오를 가지고 온다.
+      // writer에 id를 넣어야하는데 req.body.id 이런식으로 가져올 수가 없다.
+      // => 유저가 1명일 수도 있고 여러명일 수 있기 때문에 몽고DB에 있는 기능을 이용해서 가져와야 한다.
+      // $in: $in연산자 필드의 값이 특정 배열에있는 값과 동일한 문서를 선택한다.
+      Video.find({ writer: { $in: subscribedUser } })
+        .populate('writer')
+        .exec((err, videos) => {
+          if (err) return res.status(400).send(err);
+          res.status(200).json({ success: true, videos });
+        });
+    }
+  );
 });
 
 module.exports = router;
