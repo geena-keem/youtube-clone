@@ -23,7 +23,7 @@ const Subscribe = (props) => {
     }; // userFrom은 웹사이트 개발자 도구 > Application > Local Storage > userId
 
     // 해당 비디오 업로드 한 유저를 구독하는지 정보 가져오기
-    Axios.post('api/subscribe/subscribed', subscribedVariable).then(
+    Axios.post('/api/subscribe/subscribed', subscribedVariable).then(
       (response) => {
         if (response.data.success) {
           setSubscribed(response.data.subscribed);
@@ -34,11 +34,46 @@ const Subscribe = (props) => {
     );
   }, []);
 
+  const onSubscribe = () => {
+    let subscribeVariable = {
+      userTo: props.userTo,
+      userFrom: props.userFrom,
+    };
+
+    // 이미 구독 중이라면
+    if (Subscribed) {
+      Axios.post('/api/subscribe/unSubscribe', subscribeVariable).then(
+        (response) => {
+          if (response.data.success) {
+            // 구독 취소
+            setSubscribeNumber(SubscribeNumber - 1);
+            setSubscribed(!Subscribed);
+          } else {
+            alert('구독 취소를 실패 했습니다.');
+          }
+        }
+      );
+
+      // 아직 구독 중이 아니라면
+    } else {
+      Axios.post('/api/subscribe/subscribe', subscribeVariable).then(
+        (response) => {
+          if (response.data.success) {
+            setSubscribeNumber(SubscribeNumber + 1);
+            setSubscribed(!Subscribed);
+          } else {
+            alert('구독을 실패 했습니다.');
+          }
+        }
+      );
+    }
+  };
+
   return (
     <div>
       <button
         style={{
-          backgroundColor: `${Subscribe ? '#CC0000' : '#AAAAAA'}`,
+          backgroundColor: `${Subscribed ? '#AAAAAA' : '#CC0000'}`,
           borderRadius: '4px',
           borderStyle: 'none',
           color: 'white',
@@ -47,7 +82,7 @@ const Subscribe = (props) => {
           fontSize: '1rem',
           textTransform: 'uppercase',
         }}
-        onClick
+        onClick={onSubscribe}
       >
         {SubscribeNumber} {Subscribed ? 'Subscribed' : 'Subscribe'}
       </button>
