@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 
-const Subscribe = (props) => {
+function Subscribe(props) {
   const [SubscribeNumber, setSubscribeNumber] = useState(0);
   const [Subscribed, setSubscribed] = useState(false);
 
@@ -88,6 +88,6 @@ const Subscribe = (props) => {
       </button>
     </div>
   );
-};
+}
 
 export default Subscribe;
