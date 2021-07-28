@@ -2,6 +2,7 @@ import Axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import SingleComment from './SingleComment';
+import ReplyComment from './ReplyComment';
 
 function Comment(props) {
   const user = useSelector((state) => state.user); // 리덕스 안에 있는 state.user에 접근
@@ -46,13 +47,23 @@ function Comment(props) {
         props.commentLists.map(
           (comment, index) =>
             !comment.responseTo && (
-              <SingleComment
-                refreshFunction={props.refreshFunction}
-                comment={comment}
-                postId={videoId}
-              />
+              <React.Fragment>
+                <SingleComment
+                  refreshFunction={props.refreshFunction}
+                  comment={comment}
+                  postId={videoId}
+                />
+                <ReplyComment
+                  refreshFunction={props.refreshFunction}
+                  parentCommentId={comment._id}
+                  commentLists={props.commentLists}
+                  postId={videoId}
+                />
+              </React.Fragment>
             )
         )}
+
+      <br />
 
       {/* Root Comment Form */}
       <form style={{ display: 'flex' }} onSubmit={onSubmit}>
