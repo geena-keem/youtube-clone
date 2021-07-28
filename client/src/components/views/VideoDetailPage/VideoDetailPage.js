@@ -10,6 +10,7 @@ function VideoDetailPage(props) {
   const variable = { videoId: videoId };
 
   const [VideoDetail, setVideoDetail] = useState([]);
+  const [Comments, setComments] = useState([]);
 
   useEffect(() => {
     Axios.post('/api/video/getVideoDetail', variable).then((response) => {
@@ -19,7 +20,21 @@ function VideoDetailPage(props) {
         alert('비디오 정보를 가져오기 실패하였습니다.');
       }
     });
-  });
+
+    Axios.post('/api/comment/getComments', variable).then((response) => {
+      if (response.data.success) {
+        setComments(response.data.comments);
+
+        console.log(response.data.comments);
+      } else {
+        alert('댓글 정보를 가져오기 실패하였습니다.');
+      }
+    });
+  }, []); // useEffect 무한루프....ㅂㄷㅂㄷ 두 번째 인자에 빈배열을 넣어주면 해결~
+
+  const refreshFunction = (newComment) => {
+    setComments(Comments.concat(newComment));
+  };
 
   if (VideoDetail.writer) {
     // 자신이 업로드한 비디오에는 구독 버튼이 안나타나게 처리!
@@ -49,7 +64,11 @@ function VideoDetailPage(props) {
             </List.Item>
 
             {/* Comments */}
-            <Comment postId={videoId} />
+            <Comment
+              refreshFunction={refreshFunction}
+              commentLists={Comments}
+              postId={videoId}
+            />
           </div>
         </Col>
         <Col lg={6} xs={24}>

@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import SingleComment from './SingleComment';
 
 function Comment(props) {
   const user = useSelector((state) => state.user); // 리덕스 안에 있는 state.user에 접근
@@ -25,7 +26,9 @@ function Comment(props) {
 
     Axios.post('/api/comment/saveComment', variables).then((response) => {
       if (response.data.success) {
-        console.log(response.data.result);
+        // console.log(response.data.result);
+        setCommentValue(''); // 입력 후 댓글창 초기화
+        props.refreshFunction(response.data.result);
       } else {
         alert('댓글을 저장하지 못했습니다.');
       }
@@ -39,9 +42,19 @@ function Comment(props) {
       <hr />
 
       {/* Comment Lists */}
+      {props.commentLists &&
+        props.commentLists.map(
+          (comment, index) =>
+            !comment.responseTo && (
+              <SingleComment
+                refreshFunction={props.refreshFunction}
+                comment={comment}
+                postId={videoId}
+              />
+            )
+        )}
 
       {/* Root Comment Form */}
-
       <form style={{ display: 'flex' }} onSubmit={onSubmit}>
         <textarea
           style={{ width: '100%', borderRadius: '5px' }}

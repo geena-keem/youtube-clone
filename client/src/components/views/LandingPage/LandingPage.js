@@ -25,7 +25,7 @@ function LandingPage() {
     var minutes = Math.floor(video.duration / 60);
     var seconds = Math.floor(video.duration - minutes * 60);
 
-    console.log(Video);
+    // console.log(Video);
 
     return (
       <Col key={index} lg={6} md={8} xs={24}>
