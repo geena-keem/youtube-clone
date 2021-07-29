@@ -54,6 +54,61 @@ function LikeDislikes(props) {
     });
   }, []);
 
+  const onLike = () => {
+    if (LikesAciton === null) {
+      // 클릭이 안되어 있을 때
+      Axios.post('/api/like/upLike', variable).then((response) => {
+        if (response.data.success) {
+          setLikes(Likes + 1);
+          setLikesAciton('liked');
+
+          if (DislikesAciton !== null) {
+            setDislikesAciton(null);
+            setDislikes(Dislikes - 1);
+          }
+        } else {
+          alert('Like를 올리지 못하였습니다.');
+        }
+      });
+    } else {
+      Axios.post('/api/like/unLike', variable).then((response) => {
+        if (response.data.success) {
+          setLikes(Likes - 1);
+          setLikesAciton(null);
+        } else {
+          alert('Like를 내리지 못하였습니다.');
+        }
+      });
+    }
+  };
+
+  const onDislike = () => {
+    if (DislikesAciton !== null) {
+      Axios.post('/api/like/unDislike', variable).then((response) => {
+        if (response.data.success) {
+          setDislikes(Dislikes - 1);
+          setDislikesAciton(null);
+        } else {
+          alert('dislike을 지우지 못했습니다.');
+        }
+      });
+    } else {
+      Axios.post('/api/like/upDislike', variable).then((response) => {
+        if (response.data.success) {
+          setDislikes(Dislikes + 1);
+          setDislikesAciton('disliked');
+
+          if (LikesAciton !== null) {
+            setLikesAciton(null);
+            setLikes(Likes - 1);
+          }
+        } else {
+          alert('dislike을 지우지 못했습니다.');
+        }
+      });
+    }
+  };
+
   return (
     <div>
       {/* Like */}
@@ -62,23 +117,24 @@ function LikeDislikes(props) {
           <Icon
             type="like"
             theme={LikesAciton === 'liked' ? 'filled' : 'outlined'}
-            onClick
+            onClick={onLike}
           />
         </Tooltip>
         <span style={{ paddingLeft: '8px', cursor: 'auto' }}> {Likes} </span>
-      </span>
-
+      </span>{' '}
+      &nbsp;&nbsp;
       {/* Dislike */}
       <span key="comment-basic-dislike">
         <Tooltip title="Dislike">
           <Icon
             type="dislike"
             theme={DislikesAciton === 'disliked' ? 'filled' : 'outlined'}
-            onClick
+            onClick={onDislike}
           />
         </Tooltip>
         <span style={{ paddingLeft: '8px', cursor: 'auto' }}> {Dislikes} </span>
       </span>
+      &nbsp;&nbsp;
     </div>
   );
 }
